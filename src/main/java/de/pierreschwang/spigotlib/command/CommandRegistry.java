@@ -8,6 +8,10 @@ import org.bukkit.plugin.SimplePluginManager;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+/**
+ * Registers commands directly to the command map, which does not require to put commands in the plugin.yml Also,
+ * commands may be registered while the server is running.
+ */
 public class CommandRegistry {
 
     private final AbstractJavaPlugin<?> plugin;
@@ -32,6 +36,12 @@ public class CommandRegistry {
         }
     }
 
+    /**
+     * Registers a new command. The Command object needs the {@link CommandData} annotation, to define some properties,
+     * like name, permissions, etc.
+     *
+     * @param command The command to register.
+     */
     public void registerCommand(Command command) {
         if (!command.getClass().isAnnotationPresent(CommandData.class)) {
             throw new IllegalArgumentException("Command " + command.getClass().getSimpleName() + " is missing the @CommandData annotation");
