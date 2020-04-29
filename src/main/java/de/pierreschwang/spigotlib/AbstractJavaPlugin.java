@@ -1,8 +1,13 @@
 package de.pierreschwang.spigotlib;
 
 import de.pierreschwang.spigotlib.command.CommandRegistry;
+import de.pierreschwang.spigotlib.database.ConnectionProvider;
+import de.pierreschwang.spigotlib.database.StandardConnectionProvider;
 import de.pierreschwang.spigotlib.internal.PlayerListener;
+import de.pierreschwang.spigotlib.inventory.InventoryListener;
 import de.pierreschwang.spigotlib.lang.LanguageHandler;
+import de.pierreschwang.spigotlib.scoreboard.AbstractScoreboard;
+import de.pierreschwang.spigotlib.scoreboard.PlayerRenderer;
 import de.pierreschwang.spigotlib.user.User;
 import de.pierreschwang.spigotlib.user.UserFactory;
 import de.pierreschwang.spigotlib.user.UserRepository;
@@ -14,21 +19,35 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
 
     private LanguageHandler languageHandler;
     private CommandRegistry commandRegistry;
-    private UserFactory<T> userFactory;
     private UserRepository<T> userRepository;
+    private AbstractScoreboard scoreboard;
 
     @Override
     public void onEnable() {
         commandRegistry = new CommandRegistry(this);
         languageHandler = new LanguageHandler(this);
         userRepository = new UserRepository<>(this);
+        scoreboard = new AbstractScoreboard(this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
+
+        onAbstractEnable();
     }
 
     @Override
     public void onDisable() {
-
+        onAbstractDisable();
     }
+
+    /**
+     * Called when the plugin is enabled
+     */
+    public abstract void onAbstractEnable();
+
+    /**
+     * Called when the plugin disables
+     */
+    public abstract void onAbstractDisable();
 
     public UserRepository<T> getUserRepository() {
         return userRepository;
@@ -38,13 +57,22 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
         return languageHandler;
     }
 
-    public UserFactory<T> getUserFactory() {
-        return userFactory;
-    }
+    /**
+     * Should return your custom UserFactory.
+     *
+     * @return The user factory for building user objects.
+     */
+    public abstract UserFactory<T> getUserFactory();
 
-    public AbstractJavaPlugin<T> setUserFactory(UserFactory<T> userFactory) {
-        this.userFactory = userFactory;
-        return this;
+    /**
+     * The player renderer for scoreboard related views.
+     *
+     * @return Your custom renderer.
+     */
+    public abstract PlayerRenderer getPlayerRenderer();
+
+    public Class<? extends ConnectionProvider> getConnectionProvider() {
+        return StandardConnectionProvider.class;
     }
 
     public CommandRegistry getCommandRegistry() {
@@ -55,4 +83,7 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
         return userRepository.getUser(player);
     }
 
+    public AbstractScoreboard getScoreboard() {
+        return scoreboard;
+    }
 }

@@ -71,4 +71,8 @@ The ``%prefix`` is the only placeholder which gets replaced. The `{0}` defines p
  + More Documentation incl Hosted Javadocs
  + Querybuilder (simple database operations)
  + Achievements
- + Inventory API
+ + ConnectionProvider
+ + NPC Library
+ + Stats
+ + Holograms
+ + Title, Subtitle, Actionbar

@@ -21,6 +21,10 @@ public class ItemFactory<T extends ItemMeta> {
         return new ItemFactory<>(new ItemStack(material));
     }
 
+    public static ItemFactory<ItemMeta> create(Material material, short durability) {
+        return new ItemFactory<>(new ItemStack(material, 1, durability));
+    }
+
     public static LeatherItemFactory leather(Material material) {
         if (!material.name().startsWith("LEATHER_"))
             throw new IllegalArgumentException("leather() must be called with a valid leather armor part!");

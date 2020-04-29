@@ -18,11 +18,14 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         plugin.getUserRepository().create(event.getPlayer());
+        plugin.getScoreboard().refresh(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
+        plugin.getScoreboard().hide(plugin.getUserRepository().getUser(event.getPlayer()));
         plugin.getUserRepository().getUsers().remove(event.getPlayer());
+        plugin.getScoreboard().refresh(event.getPlayer());
     }
 
 }

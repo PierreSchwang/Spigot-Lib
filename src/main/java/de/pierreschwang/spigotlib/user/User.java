@@ -13,6 +13,7 @@ public class User {
         this.plugin = plugin;
         this.player = player;
         this.locale = player.spigot().getLocale();
+        plugin.getScoreboard().show(this).refresh();
     }
 
     public void sendMessage(String key, Object... params) {
