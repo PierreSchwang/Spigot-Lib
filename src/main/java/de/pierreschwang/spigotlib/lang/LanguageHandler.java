@@ -22,6 +22,28 @@ public class LanguageHandler {
         final File languageFolder = new File(plugin.getDataFolder() + "/lang");
         languageFolder.mkdirs();
         copyFromResources(languageFolder.toPath());
+        loadLanguages(languageFolder);
+    }
+
+    private void loadLanguages(File languageFolder) {
+        File[] files = languageFolder.listFiles((dir, name) -> name.endsWith(".properties"));
+        if(files == null)
+            return;
+        for (File file : files) {
+            try(final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                Properties properties = new Properties();
+                properties.load(reader);
+                final Map<String, String> translations = new HashMap<>();
+                for (String key : properties.stringPropertyNames()) {
+                    translations.put(key, ChatColor.translateAlternateColorCodes('&', properties.getProperty(key)));
+                }
+                String fileName = file.getName().substring(0, file.getName().lastIndexOf('.'));
+                languages.put(fileName, new Language(fileName, translations));
+                plugin.getLogger().info("[+] Loaded language " + fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void copyFromResources(Path target) {
@@ -64,16 +86,6 @@ public class LanguageHandler {
                 curr.setProperty(key, properties.getProperty(key));
             }
             writer.flush();
-
-            // Store locales in cache
-            String fileName = current.getFileName().toString();
-            fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-            final Map<String, String> translations = new HashMap<>();
-            for (String key : curr.stringPropertyNames()) {
-                translations.put(key, ChatColor.translateAlternateColorCodes('&', curr.getProperty(key)));
-            }
-            languages.put(fileName, new Language(fileName, translations));
-            plugin.getLogger().info("[+] Loaded language " + fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }

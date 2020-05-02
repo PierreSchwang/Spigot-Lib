@@ -1,44 +1,41 @@
 package de.pierreschwang.spigotlib.hologram;
 
-import de.pierreschwang.spigotlib.nms.NmsHelper;
-import de.pierreschwang.spigotlib.util.Pair;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Hologram {
 
     private static final double MARGIN = .28;
     private final Location location;
-    private final Map<Integer, Pair<ArmorStand, String>> lines;
+    private final List<ArmorStand> lines;
 
     public Hologram(Location location, String... lines) {
         this.location = location.add(0, (MARGIN * lines.length), 0);
-        this.lines = new HashMap<>();
+        this.lines = new ArrayList<>();
         addLines(lines);
     }
 
     public void destroy() {
-        lines.values().forEach(pair -> pair.getLeft().remove());
+        lines.forEach(Entity::remove);
     }
 
     public void setLine(int line, String content) {
-        if (!lines.containsKey(line))
+        if (lines.get(line) == null)
             return;
-        Pair<ArmorStand, String> pair = lines.get(line);
-        pair.setRight(content);
-        pair.getLeft().setCustomName(content);
+        lines.get(line).setCustomName(content);
     }
 
     public void addLines(String... lines) {
-        this.lines.values().forEach(pair -> {
-            pair.getLeft().teleport(pair.getLeft().getLocation().add(0, (MARGIN * lines.length), 0));
+        this.lines.forEach(stand -> {
+            stand.teleport(location.add(0, (MARGIN * lines.length), 0));
         });
-        for (String line : lines) {
-            this.lines.put(this.lines.size(), new Pair<>(
-                spawnLine(location.clone().add(0, -((this.lines.size() - 1) * MARGIN), 0), line), line));
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            this.lines.add(spawnLine(location.clone().add(0, -(i * MARGIN), 0), line));
         }
     }
 
@@ -47,7 +44,7 @@ public class Hologram {
         armorStand.setCustomName(line);
         armorStand.setCustomNameVisible(true);
         armorStand.setVisible(false);
-        NmsHelper.getCraftEntity().setGravity(armorStand, false);
+        armorStand.setGravity(false);
         return armorStand;
     }
 

@@ -22,7 +22,7 @@ public abstract class Command implements CommandExecutor {
     }
 
     public void onConsoleExecute(ConsoleCommandSender sender, String command, String[] args) {
-        sender.sendMessage("§cNo implementation given for players");
+        sender.sendMessage("§cNo implementation given for console");
     }
 
 }

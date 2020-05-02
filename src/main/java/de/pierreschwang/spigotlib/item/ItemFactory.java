@@ -31,8 +31,8 @@ public class ItemFactory<T extends ItemMeta> {
         return new LeatherItemFactory(new ItemStack(material));
     }
 
-    public static LeatherItemFactory skull() {
-        return new LeatherItemFactory(new ItemStack(Material.SKULL_ITEM));
+    public static SkullItemFactory skull() {
+        return new SkullItemFactory(new ItemStack(Material.SKULL_ITEM));
     }
 
     public ItemFactory<T> name(String name) {

@@ -74,5 +74,4 @@ The ``%prefix`` is the only placeholder which gets replaced. The `{0}` defines p
  + ConnectionProvider
  + NPC Library
  + Stats
- + Holograms
  + Title, Subtitle, Actionbar

@@ -1,10 +1,10 @@
 package de.pierreschwang.spigotlib.nms;
 
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public interface CraftEntity {
 
-    void setGravity(ArmorStand stand, boolean gravity);
+    NmsArmorStand spawnHologramLine(Player viewer, Location location, String display);
 
 }
