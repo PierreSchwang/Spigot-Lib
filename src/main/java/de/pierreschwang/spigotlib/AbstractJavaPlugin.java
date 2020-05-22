@@ -15,6 +15,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.function.Function;
+
 public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
 
     private LanguageHandler languageHandler;
@@ -69,7 +71,29 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
      *
      * @return Your custom renderer.
      */
-    public abstract PlayerRenderer getPlayerRenderer();
+    public PlayerRenderer getPlayerRenderer() {
+        return new PlayerRenderer() {
+            @Override
+            public Function<User, String> getPrefix() {
+                return p -> "";
+            }
+
+            @Override
+            public Function<User, String> getSuffix() {
+                return p -> "";
+            }
+
+            @Override
+            public Function<User, String> getSidebarTitle() {
+                return p -> "";
+            }
+
+            @Override
+            public Function<User, String[]> getLines() {
+                return p -> new String[0];
+            }
+        };
+    }
 
     public Class<? extends ConnectionProvider> getConnectionProvider() {
         return StandardConnectionProvider.class;

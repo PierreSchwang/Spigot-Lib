@@ -1,6 +1,7 @@
 package de.pierreschwang.spigotlib.internal;
 
 import de.pierreschwang.spigotlib.AbstractJavaPlugin;
+import de.pierreschwang.spigotlib.event.PlayerReadyEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,8 +21,13 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         plugin.getUserRepository().create(event.getPlayer());
-        plugin.getScoreboard().refresh(event.getPlayer());
         settingsPacketInterceptor.register(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerReady(PlayerReadyEvent<?> event) {
+        plugin.getScoreboard().show(event.getUser()).refresh();
+        plugin.getScoreboard().refresh(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

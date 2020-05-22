@@ -16,26 +16,19 @@ public class User {
     private final AbstractJavaPlugin<?> plugin;
     private final Player player;
     private String locale;
-    private Map<Consumer<String>, Pair<String, Object[]>> toTranslate;
 
     protected User(AbstractJavaPlugin<?> plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        toTranslate = new HashMap<>();
         this.locale = null;
-        plugin.getScoreboard().show(this).refresh();
     }
 
     public void sendMessage(String key, Object... params) {
-        getMessage(key, player::sendMessage, params);
+        player.sendMessage(getMessage(key, params));
     }
 
-    public void getMessage(String key, Consumer<String> translated, Object... params) {
-        if(locale == null) {
-            toTranslate.put(translated, new Pair<>(key, params));
-            return;
-        }
-        translated.accept(plugin.getLanguageHandler().translate(locale, key, params));
+    public String getMessage(String key, Object... params) {
+        return plugin.getLanguageHandler().translate(locale, key, params);
     }
 
     public Player getPlayer() {
@@ -48,11 +41,6 @@ public class User {
 
     public void setLocale(String locale) {
         this.locale = locale;
-        if(toTranslate.isEmpty()) {
-            return;
-        }
-        toTranslate.forEach((translated, stringPair) -> translated.accept(plugin.getLanguageHandler().translate(locale, stringPair.getLeft(), stringPair.getRight())));
-        toTranslate.clear();
     }
 
     public String getLocale() {

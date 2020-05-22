@@ -41,17 +41,20 @@ public class InternalScoreboard<T extends User> {
                 if (scoreboard.getTeam(player.getName()) != null)
                     scoreboard.getTeam(player.getName()).unregister();
             }
-            getOrCreate(player.getName(), handler.getPlugin().getPlayerRenderer().getPrefix().apply(player), handler.getPlugin().getPlayerRenderer().getSuffix().apply(player))
-                .addEntry(player.getName());
+            User pUser = handler.getPlugin().getUser(player);
+            Team team = getOrCreate(player.getName(), handler.getPlugin().getPlayerRenderer().getPrefix().apply(pUser),
+                handler.getPlugin().getPlayerRenderer().getSuffix().apply(pUser));
+            if(!team.hasEntry(player.getName()))
+                team.addEntry(player.getName());
         }
-        String title = handler.getPlugin().getPlayerRenderer().getSidebarTitle().apply(user.getPlayer());
+        String title = handler.getPlugin().getPlayerRenderer().getSidebarTitle().apply(user);
         if (title != null)
             objective.setDisplayName(title);
     }
 
     public void refreshSidebar() {
         scoreboard.getEntries().forEach(scoreboard::resetScores);
-        String[] lines = handler.getPlugin().getPlayerRenderer().getLines().apply(user.getPlayer());
+        String[] lines = handler.getPlugin().getPlayerRenderer().getLines().apply(user);
         int score = lines.length;
         for (String s : lines) {
             rerenderScore(score, s);
@@ -90,7 +93,6 @@ public class InternalScoreboard<T extends User> {
     private void rerenderScore(int score, String line) {
         Team team = createSidebarTeam(line);
         setScore(score, team.getDisplayName());
-        System.out.println("Team " + objective.getScore(team.getDisplayName()).getEntry());
     }
 
     private Team createSidebarTeam(String label) {

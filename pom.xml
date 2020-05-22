@@ -23,7 +23,7 @@
     <distributionManagement>
         <repository>
             <id>pierre-nexus</id>
-            <url>http://repo.pschwang.eu/nexus/content/repositories/snapshots/</url>
+            <url>https://repo.pschwang.eu/repository/maven-snapshots/</url>
         </repository>
     </distributionManagement>
 

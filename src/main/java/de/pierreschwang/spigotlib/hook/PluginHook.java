@@ -1,5 +1,8 @@
 package de.pierreschwang.spigotlib.hook;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+
 import java.util.Collection;
 
 public abstract class PluginHook<F extends PluginHookFunctionality> {
@@ -8,7 +11,8 @@ public abstract class PluginHook<F extends PluginHookFunctionality> {
 
     public void init() {
         for (PluginHookImplementation<F> impl : getPossibleImplementations()) {
-            if (impl.getPlugin() != null) {
+            final Plugin plugin = Bukkit.getPluginManager().getPlugin(impl.getPluginName());
+            if (plugin != null) {
                 implementation = impl.getFunctionality();
                 break;
             }

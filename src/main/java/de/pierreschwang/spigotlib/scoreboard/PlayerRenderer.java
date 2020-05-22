@@ -1,8 +1,7 @@
 package de.pierreschwang.spigotlib.scoreboard;
 
-import org.bukkit.entity.Player;
+import de.pierreschwang.spigotlib.user.User;
 
-import java.util.List;
 import java.util.function.Function;
 
 public interface PlayerRenderer {
@@ -10,29 +9,29 @@ public interface PlayerRenderer {
     /**
      * Defines the prefix for a player.
      *
-     * @return A function which returns the prefix for a {@link Player}.
+     * @return A function which returns the prefix for a {@link User}.
      */
-    Function<Player, String> getPrefix();
+    Function<User, String> getPrefix();
 
     /**
      * Defines the suffix for a player.
      *
-     * @return A function which returns the suffix for a {@link Player}.
+     * @return A function which returns the suffix for a {@link User}.
      */
-    Function<Player, String> getSuffix();
+    Function<User, String> getSuffix();
 
     /**
      * Defines the title of the sidebar scoreboard for a player.
      *
-     * @return A function which returns the title for a {@link Player}.
+     * @return A function which returns the title for a {@link User}.
      */
-    Function<Player, String> getSidebarTitle();
+    Function<User, String> getSidebarTitle();
 
     /**
      * Get the lines for the sidebar scoreboard for a specific player.
      *
      * @return The function for retrieving the lines.
      */
-    Function<Player, String[]> getLines();
+    Function<User, String[]> getLines();
 
 }

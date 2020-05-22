@@ -23,6 +23,14 @@ public class SimpleInventory {
         inventory = Bukkit.createInventory(null, size, title);
     }
 
+    SimpleInventory(int size) {
+        inventory = Bukkit.createInventory(null, size);
+    }
+
+    SimpleInventory(InventoryType type) {
+        inventory = Bukkit.createInventory(null, type);
+    }
+
     SimpleInventory(InventoryType type, String title) {
         inventory = Bukkit.createInventory(null, type, title);
     }

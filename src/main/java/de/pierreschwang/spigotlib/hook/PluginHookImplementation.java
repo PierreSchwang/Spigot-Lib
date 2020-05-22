@@ -1,17 +1,15 @@
 package de.pierreschwang.spigotlib.hook;
 
-import org.bukkit.plugin.Plugin;
-
 public abstract class PluginHookImplementation<T extends PluginHookFunctionality> {
 
-    private final Plugin plugin;
+    private final String pluginName;
 
-    protected PluginHookImplementation(Plugin plugin) {
-        this.plugin = plugin;
+    protected PluginHookImplementation(String pluginName) {
+        this.pluginName = pluginName;
     }
 
-    public Plugin getPlugin() {
-        return plugin;
+    public String getPluginName() {
+        return pluginName;
     }
 
     public abstract T getFunctionality();
