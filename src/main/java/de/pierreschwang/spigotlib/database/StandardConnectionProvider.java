@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * Standard implementation for {@link ConnectionProvider} without connection pooling or other features. May be useful
  * for short life applications, but generally not recommended for production. A better option would be a custom
- * connection provider with a hikari cp implementation (e.g.)
+ * connection provider with a hikari cp implementation (connection pooling).
  */
 public class StandardConnectionProvider extends ConnectionProvider {
 
