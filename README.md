@@ -1,11 +1,11 @@
 # Spigot Plugin Library
-
+![Deploy API](https://github.com/PierreSchwang/Spigot-Lib/workflows/Deploy%20API/badge.svg)
 ## Maven 
 ````xml
 <repositories>
     <repository>
         <id>pierre-nexus</id>
-        <url>http://repo.pschwang.eu/nexus/content/repositories/snapshots/</url>
+        <url>https://repo.pschwang.eu/repository/maven-snapshots/</url>
     </repository>
 </repositories>
 
