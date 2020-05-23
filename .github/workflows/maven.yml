@@ -6,7 +6,7 @@ on:
 jobs:
   build:
 
-    runs-on: runner-1.pschwang.eu
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v2
