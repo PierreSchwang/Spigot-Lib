@@ -9,24 +9,10 @@ import java.lang.reflect.Method;
 
 public class NmsHelper {
 
-    private static CraftEntity craftEntity;
+    private static final CraftEntity craftEntity;
 
     static {
-        craftEntity = loadImplementation(CraftEntity.class);
-    }
-
-    private static <T> T loadImplementation(Class<T> base) {
-        String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        String path = "de.pierreschwang.spigotlib.nms." + ver + ".";
-        try {
-            Class<T> clazz = (Class<T>) Class.forName(path + base.getSimpleName() + "Impl");
-            System.out.println("Using implementation " + path + clazz.getSimpleName());
-            return clazz.getConstructor().newInstance();
-        } catch (ClassNotFoundException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            System.err.println("Couldn't find a implementation for " + base.getSimpleName() + " with version " + ver);
-            e.printStackTrace();
-        }
-        return null;
+        craftEntity = new CraftEntity();
     }
 
     public static void sendPacket(Player player, Object packet) {
@@ -57,6 +43,16 @@ public class NmsHelper {
         return null;
     }
 
+    public static Class<?> getCraftBukkitClass(String name) {
+        try {
+            return Class.forName("org.bukkit.craftbukkit." +
+                Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void setField(Object object, String name, Object value) {
         try {
             getField(object, name).set(object, value);
@@ -76,11 +72,6 @@ public class NmsHelper {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static String getPlayerLocale(Player player) {
-        Object playerHandle = playerHandle(player);
-        return getFieldValue(playerHandle.getClass(), "locale", playerHandle);
     }
 
     public static Field getField(Class<?> clazz, String name) {
