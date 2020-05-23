@@ -16,4 +16,4 @@ jobs:
         java-version: 1.8
     - name: Deploy to Nexus
       run: |
-        mvn -s .m2/settings.xml clean deploy
+        mvn -s ~/.m2/settings.xml clean deploy
