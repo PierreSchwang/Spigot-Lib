@@ -1,5 +1,8 @@
 # Spigot Plugin Library
-![Deploy API](https://github.com/PierreSchwang/Spigot-Lib/workflows/Deploy%20API/badge.svg)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/PierreSchwang/Spigot-Lib/Deploy API?style=flat-square)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/PierreSchwang/Spigot-Lib)
+![GitHub stars](https://img.shields.io/github/stars/PierreSchwang/Spigot-Lib?style=flat-square)
+![GitHub forks](https://img.shields.io/github/forks/PierreSchwang/Spigot-Lib?style=flat-square)
 ## Maven 
 ````xml
 <repositories>
