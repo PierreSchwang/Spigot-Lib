@@ -9,9 +9,10 @@ public class Config {
 
     public Config(File file) {
         this.file = file;
-        file.getParentFile().mkdirs();
+        if (file.getParentFile() != null)
+            file.getParentFile().mkdirs();
         try {
-            if(this.file.exists() && !file.createNewFile()) {
+            if (!this.file.exists() && !file.createNewFile()) {
                 System.err.println("An error occurred while creating the config file!");
                 return;
             }
@@ -20,7 +21,5 @@ public class Config {
         }
 
     }
-
-
 
 }

@@ -11,17 +11,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerListener implements Listener {
 
     private final AbstractJavaPlugin<?> plugin;
-    private final SettingsPacketInterceptor settingsPacketInterceptor;
+    private final PlayerPacketInterceptor playerPacketInterceptor;
 
     public PlayerListener(AbstractJavaPlugin<?> plugin) {
         this.plugin = plugin;
-        this.settingsPacketInterceptor = new SettingsPacketInterceptor(plugin);
+        this.playerPacketInterceptor = new PlayerPacketInterceptor(plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         plugin.getUserRepository().create(event.getPlayer());
-        settingsPacketInterceptor.register(event.getPlayer());
+        playerPacketInterceptor.register(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -32,7 +32,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        settingsPacketInterceptor.unregister(event.getPlayer());
+        playerPacketInterceptor.unregister(event.getPlayer());
         plugin.getScoreboard().hide(plugin.getUserRepository().getUser(event.getPlayer()));
         plugin.getUserRepository().getUsers().remove(event.getPlayer());
         plugin.getScoreboard().refresh(event.getPlayer());
