@@ -53,6 +53,15 @@ public class NmsHelper {
         return null;
     }
 
+    public static Class<?> getClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void setField(Object object, String name, Object value) {
         try {
             getField(object, name).set(object, value);

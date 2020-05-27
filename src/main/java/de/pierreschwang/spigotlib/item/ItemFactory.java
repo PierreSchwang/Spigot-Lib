@@ -32,7 +32,7 @@ public class ItemFactory<T extends ItemMeta> {
     }
 
     public static SkullItemFactory skull() {
-        return new SkullItemFactory(new ItemStack(Material.SKULL_ITEM));
+        return new SkullItemFactory(new ItemStack(Material.SKULL_ITEM, 1, (short) 3));
     }
 
     public ItemFactory<T> name(String name) {
