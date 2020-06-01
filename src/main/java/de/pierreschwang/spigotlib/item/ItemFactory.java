@@ -35,6 +35,15 @@ public class ItemFactory<T extends ItemMeta> {
         return new SkullItemFactory(new ItemStack(Material.SKULL_ITEM));
     }
 
+    public static FireworkChargeItemFactory fireworkCharge() {
+        return new FireworkChargeItemFactory(new ItemStack(Material.FIREWORK_CHARGE));
+    }
+
+    public ItemFactory<T> amount(int amount) {
+        this.itemStack.setAmount(amount);
+        return this;
+    }
+
     public ItemFactory<T> name(String name) {
         this.meta.setDisplayName(name);
         return this;
