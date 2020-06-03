@@ -62,7 +62,7 @@ public class SettingsPacketInterceptor {
                             return;
                         }
                         if (!locale.equals(user.getLocale()))
-                            Bukkit.getPluginManager().callEvent(new PlayerLocaleUpdateEvent(player, user.getLocale()));
+                            Bukkit.getPluginManager().callEvent(new PlayerLocaleUpdateEvent(player, user.getLocale(), locale));
                         user.setLocale(locale);
                         super.channelRead(channelHandlerContext, packet);
                     } catch (Exception e) {

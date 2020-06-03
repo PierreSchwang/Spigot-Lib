@@ -13,19 +13,31 @@ public class PlayerLocaleUpdateEvent extends PlayerEvent {
 
     private static final HandlerList handlerList = new HandlerList();
     private final String oldLocale;
+    private final String newLocale;
 
-    public PlayerLocaleUpdateEvent(Player who, String oldLocale) {
+    public PlayerLocaleUpdateEvent(Player who, String oldLocale, String newLocale) {
         super(who);
         this.oldLocale = oldLocale;
+        this.newLocale = newLocale;
     }
 
     /**
-     * Get the old language of the client. The new language can be accessed using {@link User#getLocale()}.
+     * Get the old language of the client.
      *
      * @return The old locale.
      */
     public String getOldLocale() {
         return oldLocale;
+    }
+
+
+    /**
+     * Get the new language of the client.
+     *
+     * @return The new locale.
+     */
+    public String getNewLocale() {
+        return newLocale;
     }
 
     @Override
