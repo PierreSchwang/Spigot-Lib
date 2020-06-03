@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class UserRepository<U extends User> {
 
-    private final Map<Player, U> users = new HashMap<Player, U>();
+    private final Map<Player, U> users = new HashMap<>();
     private final AbstractJavaPlugin<U> plugin;
 
     public UserRepository(AbstractJavaPlugin<U> plugin) {

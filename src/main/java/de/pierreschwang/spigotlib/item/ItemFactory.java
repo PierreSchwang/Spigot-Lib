@@ -1,6 +1,8 @@
 package de.pierreschwang.spigotlib.item;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,7 +34,7 @@ public class ItemFactory<T extends ItemMeta> {
     }
 
     public static SkullItemFactory skull() {
-        return new SkullItemFactory(new ItemStack(Material.SKULL_ITEM));
+        return new SkullItemFactory(new ItemStack(Material.SKULL_ITEM, 1, (short) 3));
     }
 
     public static FireworkChargeItemFactory fireworkCharge() {
@@ -60,6 +62,16 @@ public class ItemFactory<T extends ItemMeta> {
 
     public ItemFactory<T> lore(String lore) {
         return lore(lore.split("\n"));
+    }
+
+    public ItemFactory<T> enchant(Enchantment enchantment, int lvl) {
+        getMeta().addEnchant(enchantment, lvl, true);
+        return this;
+    }
+
+    public ItemFactory<T> flag(ItemFlag... flags) {
+        getMeta().addItemFlags(flags);
+        return this;
     }
 
     public ItemStack apply() {

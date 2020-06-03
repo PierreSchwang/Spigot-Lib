@@ -10,6 +10,12 @@ public class PlayerTitle {
     private static Class<?> enumTitleActionClass = NmsHelper.getNmsClass("PacketPlayOutTitle$EnumTitleAction");
     private static Class<?> chatSerializerClass = NmsHelper.getNmsClass("IChatBaseComponent$ChatSerializer");
 
+    public static void sendAll(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        sendTitle(player, title);
+        sendSubtitle(player, subtitle);
+        sendTimes(player, fadeIn, stay, fadeOut);
+    }
+
     public static void sendTimes(Player player, int fadein, int stay, int fadeout) {
         Object packet = constructTitlePacket();
         try {

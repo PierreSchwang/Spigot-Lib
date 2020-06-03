@@ -4,8 +4,10 @@ import de.pierreschwang.spigotlib.command.CommandRegistry;
 import de.pierreschwang.spigotlib.database.ConnectionProvider;
 import de.pierreschwang.spigotlib.database.StandardConnectionProvider;
 import de.pierreschwang.spigotlib.internal.PlayerListener;
+import de.pierreschwang.spigotlib.internal.interceptors.PacketPlayInSettingsInterceptor;
 import de.pierreschwang.spigotlib.inventory.InventoryListener;
 import de.pierreschwang.spigotlib.lang.LanguageHandler;
+import de.pierreschwang.spigotlib.nms.intercept.PacketInterceptorRegistry;
 import de.pierreschwang.spigotlib.scoreboard.AbstractScoreboard;
 import de.pierreschwang.spigotlib.scoreboard.PlayerRenderer;
 import de.pierreschwang.spigotlib.user.User;
@@ -23,6 +25,7 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
     private CommandRegistry commandRegistry;
     private UserRepository<T> userRepository;
     private AbstractScoreboard scoreboard;
+    private PacketInterceptorRegistry packetInterceptorRegistry;
 
     @Override
     public void onEnable() {
@@ -30,6 +33,8 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
         languageHandler = new LanguageHandler(this);
         userRepository = new UserRepository<>(this);
         scoreboard = new AbstractScoreboard(this);
+        packetInterceptorRegistry = new PacketInterceptorRegistry();
+        packetInterceptorRegistry.registerInterceptor("PacketPlayInSettings", new PacketPlayInSettingsInterceptor(this));
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
@@ -109,5 +114,9 @@ public abstract class AbstractJavaPlugin<T extends User> extends JavaPlugin {
 
     public AbstractScoreboard getScoreboard() {
         return scoreboard;
+    }
+
+    public PacketInterceptorRegistry getPacketInterceptorRegistry() {
+        return packetInterceptorRegistry;
     }
 }
