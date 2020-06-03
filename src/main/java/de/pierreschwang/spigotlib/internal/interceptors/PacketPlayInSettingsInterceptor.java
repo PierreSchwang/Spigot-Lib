@@ -41,7 +41,7 @@ public class PacketPlayInSettingsInterceptor implements PacketInterceptor {
                     return;
                 }
                 if (!locale.equals(user.getLocale()))
-                    Bukkit.getPluginManager().callEvent(new PlayerLocaleUpdateEvent(player, user.getLocale()));
+                    Bukkit.getPluginManager().callEvent(new PlayerLocaleUpdateEvent(player, user.getLocale(), locale));
                 user.setLocale(locale);
             } catch (Exception e) {
                 e.printStackTrace();
