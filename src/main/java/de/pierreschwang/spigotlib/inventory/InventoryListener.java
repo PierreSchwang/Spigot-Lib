@@ -17,7 +17,6 @@ public class InventoryListener implements Listener {
             return;
         if (inventory.getInventoryCloseListener() == null)
             return;
-        inventory.getInventoryCloseListener().accept((Player) event.getPlayer());
         InventoryFactory.getInventories().remove(event.getInventory());
     }
 
@@ -27,10 +26,20 @@ public class InventoryListener implements Listener {
         if (inventory == null)
             return;
         event.setCancelled(true);
-        Consumer<InventoryClickEvent> listener = inventory.getClickHandlers().get(event.getSlot());
-        if(listener == null)
+        if(event.getClickedInventory() == event.getWhoClicked().getInventory())
             return;
-        listener.accept(event);
+        if(inventory instanceof SimplePaginatedInventory) {
+            SimplePaginatedInventory paginatedInventory = (SimplePaginatedInventory) inventory;
+            int targetSlot = event.getSlot() + ((paginatedInventory.getCurrentPage() - 1) * paginatedInventory.getInventory().getSize());
+            Consumer<InventoryClickEvent> listener = inventory.getClickHandlers().get(targetSlot);
+            if(listener == null)
+                return;
+            listener.accept(event);
+        } else {
+            Consumer<InventoryClickEvent> listener = inventory.getClickHandlers().get(event.getSlot());
+            if(listener == null)
+                return;
+            listener.accept(event);
+        }
     }
-
 }

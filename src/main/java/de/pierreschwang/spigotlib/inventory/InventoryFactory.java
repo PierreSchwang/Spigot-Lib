@@ -22,6 +22,12 @@ public class InventoryFactory {
         return inventory;
     }
 
+    public static SimplePaginatedInventory createPaginated(int size, String title) {
+        SimplePaginatedInventory paginatedInventory = new SimplePaginatedInventory(size, title);
+        inventories.put(paginatedInventory.getInventory(), paginatedInventory);
+        return paginatedInventory;
+    }
+
     static Map<Inventory, SimpleInventory> getInventories() {
         return inventories;
     }

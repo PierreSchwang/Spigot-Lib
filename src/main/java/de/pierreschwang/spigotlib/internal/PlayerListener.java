@@ -20,9 +20,11 @@ public class PlayerListener implements Listener {
         this.playerPacketInterceptor = new PlayerPacketInterceptor(plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerLogin(PlayerLoginEvent event) {
-        plugin.getUserRepository().create(event.getPlayer());
+        if(event.getResult().equals(PlayerLoginEvent.Result.ALLOWED)) {
+            plugin.getUserRepository().create(event.getPlayer());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
