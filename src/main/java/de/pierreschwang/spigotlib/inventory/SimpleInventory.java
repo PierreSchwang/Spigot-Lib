@@ -1,5 +1,6 @@
 package de.pierreschwang.spigotlib.inventory;
 
+import de.pierreschwang.spigotlib.inventory.exceptions.PageIndexOutOfBoundsException;
 import de.pierreschwang.spigotlib.item.ItemFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,6 +45,8 @@ public class SimpleInventory {
     public SimpleInventory setItem(int slot, ItemFactory<?> item, Consumer<InventoryClickEvent> eventConsumer) {
         return setItem(slot, item.apply(), eventConsumer);
     }
+
+    // PacketPlayOutOpenWindow
 
     public SimpleInventory setItem(int slot, ItemStack item) {
         return setItem(slot, item, (ev) -> {
