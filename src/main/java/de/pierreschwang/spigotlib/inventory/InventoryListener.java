@@ -15,8 +15,8 @@ public class InventoryListener implements Listener {
         SimpleInventory inventory = InventoryFactory.getInventories().get(event.getInventory());
         if (inventory == null)
             return;
-        if (inventory.getInventoryCloseListener() == null)
-            return;
+        if (inventory.getInventoryCloseListener() != null)
+            inventory.getInventoryCloseListener().accept((Player) event.getPlayer());
         InventoryFactory.getInventories().remove(event.getInventory());
     }
 
