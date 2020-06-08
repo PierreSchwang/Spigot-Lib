@@ -4,7 +4,9 @@ import de.pierreschwang.spigotlib.AbstractJavaPlugin;
 import org.bukkit.ChatColor;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
@@ -27,10 +29,10 @@ public class LanguageHandler {
 
     private void loadLanguages(File languageFolder) {
         File[] files = languageFolder.listFiles((dir, name) -> name.endsWith(".properties"));
-        if(files == null)
+        if (files == null)
             return;
         for (File file : files) {
-            try(final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 Properties properties = new Properties();
                 properties.load(reader);
                 final Map<String, String> translations = new HashMap<>();
@@ -48,7 +50,9 @@ public class LanguageHandler {
 
     private void copyFromResources(Path target) {
         try {
-            final Path path = FileSystems.newFileSystem(getClass().getResource("").toURI(), Collections.emptyMap()).getPath("/lang");
+            final Path path = getLanguageTemplateDir();
+            if(path == null)
+                throw new NullPointerException("Language template directory could not be found");
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -64,9 +68,25 @@ public class LanguageHandler {
                     return FileVisitResult.CONTINUE;
                 }
             });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Path getLanguageTemplateDir() {
+        try {
+            URI uri = getClass().getResource("").toURI();
+            FileSystem fileSystem;
+            try {
+                fileSystem = FileSystems.getFileSystem(uri);
+            } catch (FileSystemNotFoundException e) {
+                fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            }
+            return fileSystem.getPath("/lang");
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     private void synchronize(BufferedReader template, Path current) {
