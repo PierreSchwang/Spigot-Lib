@@ -3,8 +3,11 @@ package de.pierreschwang.spigotlib.inventory;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class InventoryFactory {
 
@@ -22,8 +25,8 @@ public class InventoryFactory {
         return inventory;
     }
 
-    public static SimplePaginatedInventory createPaginated(int size, String title) {
-        SimplePaginatedInventory paginatedInventory = new SimplePaginatedInventory(size, title);
+    public static SimplePaginatedInventory createPaginated(int size, String title, int... dynamicSlots) {
+        SimplePaginatedInventory paginatedInventory = new SimplePaginatedInventory(size, title, dynamicSlots);
         inventories.put(paginatedInventory.getInventory(), paginatedInventory);
         return paginatedInventory;
     }

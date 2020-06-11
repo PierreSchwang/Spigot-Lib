@@ -1,6 +1,5 @@
 package de.pierreschwang.spigotlib.inventory;
 
-import de.pierreschwang.spigotlib.inventory.exceptions.PageIndexOutOfBoundsException;
 import de.pierreschwang.spigotlib.item.ItemFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
