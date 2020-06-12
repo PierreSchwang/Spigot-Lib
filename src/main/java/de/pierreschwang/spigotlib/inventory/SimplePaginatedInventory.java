@@ -151,7 +151,7 @@ public class SimplePaginatedInventory extends SimpleInventory {
         int[] inventoryPages = IntStream.range(1, getMaxPage() + 1).toArray();
         for (int inventoryPage : inventoryPages) {
             int offset = getOffsetForPage(inventoryPage);
-            for (Integer dynamicSlot : dynamicSlots) {
+            for (int dynamicSlot : dynamicSlots) {
                 int targetSlot = dynamicSlot + offset;
                 if(getInventoryContents().get(targetSlot) == null) {
                     return this.setItem(inventoryPage, dynamicSlot, item, eventConsumer);
