@@ -27,11 +27,11 @@ public class SimplePaginatedInventory extends SimpleInventory {
     private final List<Integer> dynamicSlots;
     private int currentPage;
 
-    SimplePaginatedInventory(int size, String title, int... dynamicSlots) {
+    SimplePaginatedInventory(int size, String title, Integer... dynamicSlots) {
         super(size, title);
         this.currentPage = 1;
         this.inventoryContents = new LinkedHashMap<>();
-        this.dynamicSlots = Arrays.stream(dynamicSlots).boxed().collect(Collectors.toList());
+        this.dynamicSlots = Arrays.asList(dynamicSlots);
         Collections.sort(this.dynamicSlots);
         if(this.dynamicSlots.size() <= 0) {
             return;
@@ -52,12 +52,12 @@ public class SimplePaginatedInventory extends SimpleInventory {
         return dynamicSlots;
     }
 
-    public void addDynamicSlots(int... slots) {
-        getDynamicSlots().addAll(Arrays.stream(slots).boxed().collect(Collectors.toList()));
+    public void addDynamicSlots(Integer... slots) {
+        getDynamicSlots().addAll(Arrays.asList(slots));
     }
 
-    public void removeDynamicSlots(int... slots) {
-        getDynamicSlots().removeAll(Arrays.stream(slots).boxed().collect(Collectors.toList()));
+    public void removeDynamicSlots(Integer... slots) {
+        getDynamicSlots().removeAll(Arrays.asList(slots));
     }
 
     public int getCurrentPage() {
@@ -196,7 +196,10 @@ public class SimplePaginatedInventory extends SimpleInventory {
         int offset = setCurrentPage(newPage).getOffsetForPage(newPage);
         getDynamicSlots().forEach(dynamicSlot -> getInventory().setItem(dynamicSlot, getInventoryContents().get(dynamicSlot + offset)));
         player.updateInventory();
-        setTitle(getInventory().getTitle().replace("%page%", String.valueOf(getCurrentPage())), player);
+
+        if(getInventory().getTitle().contains("%page%")) {
+            setTitle(getInventory().getTitle().replace("%page%", String.valueOf(getCurrentPage())), player);
+        }
     }
 
     public void open(int page, Player player) {
@@ -207,7 +210,9 @@ public class SimplePaginatedInventory extends SimpleInventory {
             throw new PaginatedInventoryException("Page number (" + page + ") can not be greater than the maximum amount of pages (currently " + getMaxPage() + ")");
         }
         player.openInventory(getInventory());
-        setTitle(getInventory().getTitle().replace("%page%", String.valueOf(page)), player);
+        if(getInventory().getTitle().contains("%page%")) {
+            setTitle(getInventory().getTitle().replace("%page%", String.valueOf(page)), player);
+        }
         new Thread(() -> {
             int offset = setCurrentPage(page).getOffsetForPage(page);
             getDynamicSlots().forEach(dynamicSlot -> getInventory().setItem(dynamicSlot, getInventoryContents().get(dynamicSlot + offset)));

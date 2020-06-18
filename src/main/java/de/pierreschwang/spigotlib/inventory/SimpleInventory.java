@@ -47,22 +47,6 @@ public class SimpleInventory {
         return setItem(slot, item.apply(), eventConsumer);
     }
 
-    // PacketPlayOutOpenWindow
-
-    /*
-    public void setTitle(String title) {
-        final CraftPlayer craftPlayer = ((CraftPlayer) viewer.getPlayer());
-        PacketPlayOutOpenWindow packetPlayOutOpenWindow = new PacketPlayOutOpenWindow(
-                craftPlayer.getHandle().activeContainer.windowId,
-                "minecraft:" + viewer.getPlayer().getOpenInventory().getType().name().toLowerCase(),
-                new ChatMessage(title),
-                getSize()
-        );
-        craftPlayer.getHandle().playerConnection.sendPacket(packetPlayOutOpenWindow);
-        craftPlayer.getHandle().updateInventory(craftPlayer.getHandle().activeContainer);
-    }
-     */
-
     public void setTitle(String title, Player... players) {
         try {
             Class<?> chatMessageClass = NmsHelper.getNmsClass("ChatMessage");
