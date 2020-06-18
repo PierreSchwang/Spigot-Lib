@@ -25,7 +25,7 @@ public class InventoryFactory {
         return inventory;
     }
 
-    public static SimplePaginatedInventory createPaginated(int size, String title, int... dynamicSlots) {
+    public static SimplePaginatedInventory createPaginated(int size, String title, Integer... dynamicSlots) {
         SimplePaginatedInventory paginatedInventory = new SimplePaginatedInventory(size, title, dynamicSlots);
         inventories.put(paginatedInventory.getInventory(), paginatedInventory);
         return paginatedInventory;
