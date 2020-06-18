@@ -30,7 +30,15 @@ public class InventoryListener implements Listener {
             return;
         if(inventory instanceof SimplePaginatedInventory) {
             SimplePaginatedInventory paginatedInventory = (SimplePaginatedInventory) inventory;
-            int targetSlot = event.getSlot() + ((paginatedInventory.getCurrentPage() - 1) * paginatedInventory.getInventory().getSize());
+            if(event.getSlot() == paginatedInventory.getPageSwitcherBackSlot()) {
+                paginatedInventory.refresh(paginatedInventory.getPreviousPage(), (Player) event.getWhoClicked());
+                return;
+            }
+            if(event.getSlot() == paginatedInventory.getPageSwitcherForwardSlot()) {
+                paginatedInventory.refresh(paginatedInventory.getNextPage(), (Player) event.getWhoClicked());
+                return;
+            }
+            int targetSlot = event.getSlot() + paginatedInventory.getOffsetForPage(paginatedInventory.getCurrentPage());
             Consumer<InventoryClickEvent> listener = inventory.getClickHandlers().get(targetSlot);
             if(listener == null)
                 return;
