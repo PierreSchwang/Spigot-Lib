@@ -2,6 +2,8 @@ name: Deploy API
 
 on:
   push:
+    branches:
+      - master
 
 jobs:
   build:
