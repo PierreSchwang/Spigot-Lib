@@ -42,8 +42,8 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         playerPacketInterceptor.unregister(event.getPlayer());
         plugin.getScoreboard().hide(plugin.getUserRepository().getUser(event.getPlayer()));
-        plugin.getUserRepository().getUsers().remove(event.getPlayer());
         plugin.getScoreboard().refresh(event.getPlayer());
+        plugin.getUserRepository().getUsers().remove(event.getPlayer());
     }
 
 }

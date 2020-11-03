@@ -1,32 +1,63 @@
 package de.pierreschwang.spigotlib.inventory;
 
-import de.pierreschwang.spigotlib.inventory.exceptions.PageIndexOutOfBoundsException;
+import de.pierreschwang.spigotlib.inventory.exceptions.PaginatedInventoryException;
 import de.pierreschwang.spigotlib.item.ItemFactory;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedHashMap;
-import java.util.OptionalInt;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SimplePaginatedInventory extends SimpleInventory {
+    private static final ItemStack ARROW_LEFT_ITEM = ItemFactory.skull()
+            .texture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==")
+            .name("§6<-")
+            .apply();
+    private static final ItemStack ARROW_RIGHT_ITEM = ItemFactory.skull()
+            .texture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19")
+            .name("§6->")
+            .apply();
+    private int pageSwitcherBackSlot = -1;
+    private int pageSwitcherForwardSlot = -1;
     private final LinkedHashMap<Integer, ItemStack> inventoryContents;
+    private final List<Integer> dynamicSlots;
     private int currentPage;
 
-    SimplePaginatedInventory(int size, String title) {
+    SimplePaginatedInventory(int size, String title, Integer... dynamicSlots) {
         super(size, title);
-        inventoryContents = new LinkedHashMap<>();
-        currentPage = 1;
-    }
-
-    SimplePaginatedInventory(int size) {
-        this(size, "Inventory");
+        this.currentPage = 1;
+        this.inventoryContents = new LinkedHashMap<>();
+        this.dynamicSlots = Arrays.asList(dynamicSlots);
+        Collections.sort(this.dynamicSlots);
+        if(this.dynamicSlots.size() <= 0) {
+            return;
+        }
+        if(this.dynamicSlots.get(0) < 0) {
+            throw new PaginatedInventoryException("Dynamic slot out of range: value for a dynamic slot can not be less than 0");
+        }
+        if(this.dynamicSlots.get(this.dynamicSlots.size() - 1) >= getInventory().getSize()) {
+            throw new PaginatedInventoryException("Dynamic slot out of range: value for dynamic slot can not be greater than the size of the inventory");
+        }
     }
 
     public LinkedHashMap<Integer, ItemStack> getInventoryContents() {
         return inventoryContents;
+    }
+
+    public List<Integer> getDynamicSlots() {
+        return dynamicSlots;
+    }
+
+    public void addDynamicSlots(Integer... slots) {
+        getDynamicSlots().addAll(Arrays.asList(slots));
+    }
+
+    public void removeDynamicSlots(Integer... slots) {
+        getDynamicSlots().removeAll(Arrays.asList(slots));
     }
 
     public int getCurrentPage() {
@@ -34,8 +65,52 @@ public class SimplePaginatedInventory extends SimpleInventory {
     }
 
     public int getMaxPage() {
-        int highestItemSlot = getMaxItemIndex();
-        return (int) Math.ceil((highestItemSlot + 1) / (float) getInventory().getSize());
+        return getPageForIndex(getMaxItemIndex());
+    }
+
+    public int getNextPage() {
+        return Math.min(getCurrentPage() + 1, getMaxPage());
+    }
+
+    public int getPreviousPage() {
+        return Math.max(getCurrentPage() - 1, 1);
+    }
+
+    public int getPageSwitcherBackSlot() {
+        return pageSwitcherBackSlot;
+    }
+
+    public SimplePaginatedInventory setPageSwitcherBackSlot(int pageSwitcherBackSlot) {
+        if(getPageSwitcherBackSlot() != -1) {
+            getInventory().setItem(getPageSwitcherBackSlot(), ItemFactory.create(Material.AIR).apply());
+        }
+        this.pageSwitcherBackSlot = pageSwitcherBackSlot;
+        if(pageSwitcherBackSlot != -1) {
+            getInventory().setItem(pageSwitcherBackSlot, ARROW_LEFT_ITEM);
+        }
+        return this;
+    }
+
+    public int getPageSwitcherForwardSlot() {
+        return pageSwitcherForwardSlot;
+    }
+
+    public SimplePaginatedInventory setPageSwitcherForwardSlot(int pageSwitcherForwardSlot) {
+        if(getPageSwitcherForwardSlot() != -1) {
+            getInventory().setItem(getPageSwitcherForwardSlot(), ItemFactory.create(Material.AIR).apply());
+        }
+        this.pageSwitcherForwardSlot = pageSwitcherForwardSlot;
+        if(pageSwitcherForwardSlot != -1) {
+            getInventory().setItem(pageSwitcherForwardSlot, ARROW_RIGHT_ITEM);
+        }
+        return this;
+    }
+
+    public int getPageForIndex(int index) {
+        if(index < 0) {
+            return 1;
+        }
+        return (int) Math.ceil((index + 1) / (float) getDynamicSlots().size());
     }
 
     public int getMaxItemIndex() {
@@ -49,13 +124,17 @@ public class SimplePaginatedInventory extends SimpleInventory {
         return (page - 1) * getInventory().getSize();
     }
 
-    public void setCurrentPage(int currentPage) {
+    public SimplePaginatedInventory setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
+        return this;
     }
 
     public SimplePaginatedInventory setItem(int page, int slot, ItemStack item, Consumer<InventoryClickEvent> eventConsumer) {
         if(page < 1) {
-            throw new PageIndexOutOfBoundsException("Page number can not be less than 1");
+            throw new PaginatedInventoryException("Page number can not be less than 1");
+        }
+        if(!getDynamicSlots().contains(slot)) {
+            throw new PaginatedInventoryException("You can not set an item on a non dynamic slot");
         }
         int targetSlot = slot + getOffsetForPage(page);
         this.inventoryContents.put(targetSlot, item);
@@ -65,32 +144,37 @@ public class SimplePaginatedInventory extends SimpleInventory {
 
     @Override
     public SimplePaginatedInventory setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> eventConsumer) {
-        return this.setItem(1, slot, item, eventConsumer);
+        return this.setItem(getPageForIndex(slot), slot, item, eventConsumer);
     }
 
     @Override
     public SimplePaginatedInventory setItem(int slot, ItemFactory<?> item, Consumer<InventoryClickEvent> eventConsumer) {
-        return this.setItem(slot, item.apply(), eventConsumer);
+        return this.setItem(getPageForIndex(slot), slot, item.apply(), eventConsumer);
     }
 
     @Override
     public SimplePaginatedInventory setItem(int slot, ItemStack item) {
-        return this.setItem(slot, item, event -> {});
+        return this.setItem(getPageForIndex(slot), slot, item, event -> {});
     }
 
     @Override
     public SimplePaginatedInventory setItem(int slot, ItemFactory<?> item) {
-        return this.setItem(slot, item.apply(), event -> {});
+        return this.setItem(getPageForIndex(slot), slot, item.apply(), event -> {});
     }
 
     public SimplePaginatedInventory addItem(ItemStack item, Consumer<InventoryClickEvent> eventConsumer) {
-        int maxSlot = getMaxItemIndex();
-        for(int index = 0; index < maxSlot; index++) {
-            if(getInventoryContents().get(index) == null) {
-                return this.setItem(index, item, eventConsumer);
+        int[] inventoryPages = IntStream.range(1, getMaxPage() + 1).toArray();
+        for (int inventoryPage : inventoryPages) {
+            int offset = getOffsetForPage(inventoryPage);
+            for (int dynamicSlot : dynamicSlots) {
+                int targetSlot = dynamicSlot + offset;
+                if(getInventoryContents().get(targetSlot) == null) {
+                    return this.setItem(inventoryPage, dynamicSlot, item, eventConsumer);
+                }
             }
         }
-        return this.setItem(maxSlot + 1, item, eventConsumer);
+        int nextPage = getMaxPage() + 1;
+        return this.setItem(nextPage, 0, item, eventConsumer);
     }
 
     public SimplePaginatedInventory addItem(ItemFactory<?> item, Consumer<InventoryClickEvent> eventConsumer) {
@@ -105,22 +189,44 @@ public class SimplePaginatedInventory extends SimpleInventory {
         return this.addItem(item.apply(), event -> {});
     }
 
-    public void open(int page, Player... players) {
-        if(page < 0) {
-            throw new PageIndexOutOfBoundsException("Page number can not be less than 1");
+    public void refresh(int newPage, Player player) {
+        if(newPage > getMaxPage() || newPage < 1) {
+            return;
         }
-        setCurrentPage(page);
-        int offset = getOffsetForPage(page);
-        for(int index = offset; index < offset + getInventory().getSize(); index++) {
-            getInventory().setItem(index - offset, getInventoryContents().get(index));
+        int offset = setCurrentPage(newPage).getOffsetForPage(newPage);
+        getDynamicSlots().forEach(dynamicSlot -> getInventory().setItem(dynamicSlot, getInventoryContents().get(dynamicSlot + offset)));
+        player.updateInventory();
+
+        if(getInventory().getTitle().contains("%page%")) {
+            setTitle(getInventory().getTitle().replace("%page%", String.valueOf(getCurrentPage())), player);
         }
-        for (Player player : players) {
-            player.openInventory(getInventory());
+    }
+
+    public void open(int page, Player player) {
+        if(page < 1) {
+            throw new PaginatedInventoryException("Page number (" + page +  ") can not be less than 1");
         }
+        if(page > getMaxPage()) {
+            throw new PaginatedInventoryException("Page number (" + page + ") can not be greater than the maximum amount of pages (currently " + getMaxPage() + ")");
+        }
+        player.openInventory(getInventory());
+        if(getInventory().getTitle().contains("%page%")) {
+            setTitle(getInventory().getTitle().replace("%page%", String.valueOf(page)), player);
+        }
+        new Thread(() -> {
+            int offset = setCurrentPage(page).getOffsetForPage(page);
+            getDynamicSlots().forEach(dynamicSlot -> getInventory().setItem(dynamicSlot, getInventoryContents().get(dynamicSlot + offset)));
+            player.updateInventory();
+        }).start();
     }
 
     @Override
     public void open(Player... players) {
-        this.open(1, players);
+        if(players.length > 1) {
+            throw new PaginatedInventoryException("A paginated inventory can not be opened for more than one player");
+        }
+        if(players[0] != null) {
+            this.open(1, players[0]);
+        }
     }
 }
