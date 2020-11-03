@@ -3,6 +3,7 @@ package de.pierreschwang.spigotlib.command;
 import de.pierreschwang.spigotlib.AbstractJavaPlugin;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.SimplePluginManager;
 
 import java.lang.reflect.Field;
@@ -13,6 +14,9 @@ import java.util.Arrays;
  * commands may be registered while the server is running.
  */
 public class CommandRegistry {
+
+    private static final String NO_PERMISSION_KEY = "command-no-permissions";
+    private static final String NO_PERMISSION_FALLBACK = "§cYou dont have permission to do that!";
 
     private final AbstractJavaPlugin<?> plugin;
     private CommandMap commandMap;
@@ -51,7 +55,11 @@ public class CommandRegistry {
             @Override
             public boolean execute(CommandSender sender, String commandLabel, String[] args) {
                 if (!data.permission().isEmpty() && !sender.hasPermission(data.permission())) {
-                    sender.sendMessage("§cYou dont have permission to do that!");
+                    String locale = "en_US";
+                    if (sender instanceof Player)
+                        locale = plugin.getUser((Player) sender).getLocale();
+                    String customNoPermission = plugin.getLanguageHandler().translate(locale, NO_PERMISSION_KEY);
+                    sender.sendMessage(customNoPermission.equals(NO_PERMISSION_KEY) ? NO_PERMISSION_FALLBACK : customNoPermission);
                     return true;
                 }
                 return command.onCommand(sender, this, commandLabel, args);
